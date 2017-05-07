@@ -1,18 +1,18 @@
 import findClosestIndex, {
 	createFindClosestIndex,
-	getNumberDistance
+	// getNumberDifference
 } from './findClosestIndex';
 import levenshtein from 'fast-levenshtein';
-
-describe('getNumberDistance', () => {
-	test('correctly returns the distance between two numbers', () => {
-		expect(getNumberDistance(0, 10)).toBe(10);
-		expect(getNumberDistance(10, 0)).toBe(10);
-		expect(getNumberDistance(-10, 10)).toBe(20);
-		expect(getNumberDistance(10, -10)).toBe(20);
-		expect(getNumberDistance(0.5, -10)).toBe(10.5);
-	})
-});
+//
+// describe('getNumberDifference', () => {
+// 	test('correctly returns the difference between two numbers', () => {
+// 		expect(getNumberDifference(0, 10)).toBe(10);
+// 		expect(getNumberDifference(10, 0)).toBe(10);
+// 		expect(getNumberDifference(-10, 10)).toBe(20);
+// 		expect(getNumberDifference(10, -10)).toBe(20);
+// 		expect(getNumberDifference(0.5, -10)).toBe(10.5);
+// 	})
+// });
 
 describe('findClosestIndex', () => {
 
@@ -104,7 +104,8 @@ describe('createFindClosestIndex', () => {
 	});
 
 	describe('usage with a 3rd party levenshtein module', () => {
-		const tiebreakerGetLongest = (closest, current) => current.length > closest.length;
+		const tiebreakerGetLongest = (closest, current) =>
+			current.value.length > closest.value.length ? current : closest;
 		const findClosestWord = createFindClosestIndex(levenshtein.get, tiebreakerGetLongest);
 
 		test('works as expected', () => {

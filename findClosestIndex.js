@@ -1,31 +1,27 @@
-const returnValue = (value) => value;
+import {
+	returnValue,
+	getNumberDifference,
+	getLargestItem,
+	reduceToOne
+} from './util';
 
-const tieBreak = (items, tieBreaker) => {
-	let closest = items[0];
-
-	for (let i = 1; i < items.length; i++) {
-		if (tieBreaker(closest.value, items[i].value)) {
-			closest = items[i];
-		}
-	}
-
-	return closest.index;
-};
-
-const tiebreakerGetBiggest = (closest, current) =>
-	(Math.abs(current) > Math.abs(closest));
-
-export const getNumberDistance = (n1, n2) => Math.abs(n1 - n2);
-
+/**
+ * Creates a function which returns
+ *
+ * @param {Function} getDistance
+ * @param {Function} [distanceTieBreaker]
+ * @return {Function}
+ */
 export const createFindClosestIndex = (getDistance, distanceTieBreaker) => {
-	return function findClosestIndex(collection, valueToFind, getValue = returnValue) {
+	return function findClosestIndex(array, valueToFind, getValue = returnValue) {
 		let closest = {
 			distance: Number.POSITIVE_INFINITY,
-			items: [{index: -1}]
+			items: []
 		};
 
-		for (let i = 0; i < collection.length; i++) {
-			const value = getValue(collection[i]);
+		for (let i = 0; i < array.length; i++) {
+			const item = array[i];
+			const value = getValue(item);
 			const distance = getDistance(value, valueToFind);
 
 			if (distance === 0) {
@@ -33,24 +29,27 @@ export const createFindClosestIndex = (getDistance, distanceTieBreaker) => {
 			}
 
 			if (distance === closest.distance) {
-				closest.items.push({value, index: i});
+				closest.items.push({item, value, index: i});
 			} else if (distance < closest.distance) {
 				closest = {
 					distance,
-					items: [{value, index: i}]
+					items: [{item, value, index: i}]
 				};
 			}
 		}
 
-		if (closest.items.length === 1) {
-			return closest.items[0].index;
+		switch (closest.items.length) {
+			case 0:
+				return -1;
+			case 1:
+				return closest.items[0].index;
+			default:
+				return distanceTieBreaker
+					? reduceToOne(closest.items, distanceTieBreaker).index
+					: closest.items[0].index;
 		}
 
-		return distanceTieBreaker
-			// TODO: add advanced tie breaker back
-			? tieBreak(closest.items, distanceTieBreaker)
-			: closest.items[0].index;
 	};
 };
 
-export default createFindClosestIndex(getNumberDistance, tiebreakerGetBiggest);
+export default createFindClosestIndex(getNumberDifference, getLargestItem);

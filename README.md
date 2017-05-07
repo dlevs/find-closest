@@ -28,13 +28,17 @@ findClosest(people, 17, getAge);
 ```
 
 ### createFindClosest(getDistance)
+`findClosest` works for numbers. However, you may make other comparisons by creating a custom function with `createFindClosest`. Just pass a function to calculate the distance between the value from the array, and the expected value.
+
 #### Basic example
 ```javascript
 import {createFindClosest} from 'find-closest';
 
-const findClosestLength = createFindClosest(({length}) => length);
+const findClosestLength = createFindClosest(
+	(name, lengthToFind) => name.length - lengthToFind
+);
 
-findClosestLength(['Bob', 'Laura', 'Timothy', 10);
+findClosestLength(['Bob', 'Laura', 'Timothy'], 10);
 // returns 'Timothy'
 ```
 

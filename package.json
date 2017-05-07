@@ -1,6 +1,6 @@
 {
   "name": "find-closest",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Like Array.prototype.find, but for finding the closest match.",
   "main": "index.js",
   "scripts": {

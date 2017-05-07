@@ -14,7 +14,7 @@ findClosest([0, 10, 20], 12);
 ```
 
 ### findClosest(array, valueToFind, [valueGetter])
-```
+```javascript
 import findClosest from 'find-closest';
 
 const people = [
@@ -29,7 +29,7 @@ findClosest(people, 17, getAge);
 
 ### createFindClosest(getDistance)
 #### Basic example
-```
+```javascript
 import {createFindClosest} from 'find-closest';
 
 const findClosestLength = createFindClosest(({length}) => length);
@@ -40,7 +40,7 @@ findClosestLength(['Bob', 'Laura', 'Timothy', 10);
 
 #### Plugging in third party modules
 It's simple to use a third-party module to calculate what "close" means. This example uses the "fast-levenshtein" module (installed via npm) to calculate the similarity between strings.
-```
+```javascript
 import {createFindClosest} from 'find-closest';
 import levenshtein from 'fast-levenshtein';
 

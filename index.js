@@ -26,8 +26,8 @@ const createComparerForProperty = (property) => (n1Object, n2) =>
  * findClosestIndex([0, 10, 20], 11)
  * // returns 1
  *
- * findClosestIndex([{n: 0}, {n: 10}, {n: 20}], 11, 'n')
- * // returns 1
+ * findClosestIndex([{n: 0}, {n: 10}, {n: 20}], 18, 'n')
+ * // returns 2
  *
  * @param {Array} haystack
  * @param {*} needle

@@ -13,8 +13,9 @@ export const defaultCompare = (n1, n2) => Math.abs(n1 - n2);
  * Returns a function which will act like `defaultCompare`, except a property
  * from the first argument is used instead of the entire first argument value.
  *
+ * @private
  * @param {String} property
- * @return {Number}
+ * @return {Function}
  */
 const createComparerForProperty = (property) => (n1Object, n2) =>
 	defaultCompare(get(n1Object, property), n2);
@@ -22,13 +23,6 @@ const createComparerForProperty = (property) => (n1Object, n2) =>
 /**
  * Returns the index of the item in an array that is closest in likeness to
  * the `needle` parameter.
- *
- * @example
- * findClosestIndex([0, 10, 20], 11)
- * // returns 1
- *
- * findClosestIndex([{n: 0}, {n: 10}, {n: 20}], 18, 'n')
- * // returns 2
  *
  * @param {Array} haystack
  * @param {*} needle

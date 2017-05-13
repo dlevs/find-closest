@@ -5,6 +5,9 @@ This module provides functions equivalent to `Array.prototype.find` and `Array.p
 `npm install find-closest`
 
 ## API
+- [findClosest](#findclosest)
+- [findClosestIndex](#findclosestindex)
+
 ### findClosest
 #### Basic usage
 The default behaviour is to compare numbers in an array to the target number provided. The closest match is returned.
@@ -27,12 +30,12 @@ findClosest(users, 30, ['details', 'age']);
 // both return the object for Laura
 ```
 
-#### Compare with a custom comparison function
-To compare values other than numbers, a comparison function may be passed as the third argument.
+#### Compare with a custom function
+To compare values other than numbers, a comparison function may be passed as the third argument to `findClosest`. This is invoked for each item in the array.
 
-The comparison function is passed the current array item and the target value to find. It is expected to return a number:
-- The item with the lowest result is returned by `findClosest`.
-- If multiple items in the array share the lowest result, the first occurance is returned by `findClosest`.
+The comparison function is passed the current array item and the target value to find. It is expected to return a number indicating how similar the two values are. The results of this function determine which array item is returned by `findClosest`:
+- The item with the lowest result is returned.
+- If multiple items in the array share the lowest result, the first occurance is returned.
 - `0` indicates the closest possible likeness.
 
 This example shows how to get the string with the closest length provided:

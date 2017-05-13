@@ -2,13 +2,6 @@
 const get = require('lodash.get');
 
 
-// Exports
-module.exports = findClosest;
-module.exports.findClosest = findClosest;
-module.exports.findClosestIndex = findClosestIndex;
-module.exports.defaultCompare = defaultCompare;
-
-
 // Functions
 /**
  * Gets the difference between two numbers.
@@ -78,3 +71,10 @@ const findClosestIndex = (haystack, needle, comparer = defaultCompare) => {
  */
 const findClosest = (array, needle, comparer) =>
 	array[findClosestIndex(array, needle, comparer)];
+
+
+// Exports
+module.exports = findClosest;
+module.exports.findClosest = findClosest;
+module.exports.findClosestIndex = findClosestIndex;
+module.exports.defaultCompare = defaultCompare;

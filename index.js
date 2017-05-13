@@ -1,5 +1,15 @@
-import get from 'lodash.get';
+// Imports
+const get = require('lodash.get');
 
+
+// Exports
+module.exports = findClosest;
+module.exports.findClosest = findClosest;
+module.exports.findClosestIndex = findClosestIndex;
+module.exports.defaultCompare = defaultCompare;
+
+
+// Functions
 /**
  * Gets the difference between two numbers.
  *
@@ -7,7 +17,7 @@ import get from 'lodash.get';
  * @param {Number} n2
  * @return {Number}
  */
-export const defaultCompare = (n1, n2) => Math.abs(n1 - n2);
+const defaultCompare = (n1, n2) => Math.abs(n1 - n2);
 
 /**
  * Returns a function which will act like `defaultCompare`, except a property
@@ -29,7 +39,7 @@ const createComparerForProperty = (property) => (n1Object, n2) =>
  * @param {Function|String|Array} [comparer]
  * @return {Number}
  */
-export const findClosestIndex = (haystack, needle, comparer = defaultCompare) => {
+const findClosestIndex = (haystack, needle, comparer = defaultCompare) => {
 	if (typeof comparer !== 'function') {
 		// Comparer is a string or array. Make a compare function that uses this
 		// property from the array items.
@@ -66,7 +76,5 @@ export const findClosestIndex = (haystack, needle, comparer = defaultCompare) =>
  * @param {Function|String|Array} [comparer]
  * @return {*}
  */
-export const findClosest = (array, needle, comparer) =>
+const findClosest = (array, needle, comparer) =>
 	array[findClosestIndex(array, needle, comparer)];
-
-export default findClosest;

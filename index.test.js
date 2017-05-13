@@ -1,21 +1,16 @@
 import findClosest, {
 	findClosest as findClosestNamed,
 	findClosestIndex,
-	// TODO: Rename defaultCompare?
 	defaultCompare
 } from './index';
 import levenshtein from 'fast-levenshtein';
 
 
-describe('default export', () => {
-	test('is same as named `findClosest` export', () => {
-		expect(findClosestNamed).toBe(findClosest);
-	});
-});
-
 describe('findClosestIndex', () => {
-	test('function is named', () => {
-		expect(findClosestIndex.name).toBe('findClosestIndex');
+	describe('meta', () => {
+		test('function is named', () => {
+			expect(findClosestIndex.name).toBe('findClosestIndex');
+		});
 	});
 
 	describe('findClosestIndex(Array, Number)', () => {
@@ -135,17 +130,29 @@ describe('findClosestIndex', () => {
 });
 
 describe('findClosest', () => {
+	describe('meta', () => {
+		test('function is named', () => {
+			expect(findClosest.name).toBe('findClosest');
+		});
+		test('is the default export', () => {
+			expect(findClosestNamed).toBe(findClosest);
+		});
+	});
+
 	test('works the same as findClosestIndex but returns the actual item', () => {
 		const nested = [
 			{foo: {bar: 0}},
 			{foo: {bar: 10}},
 			{foo: {bar: 20}}
 		];
+		const names = ['jim', 'bob', 'don', 'laura'];
 		expect(findClosest([0, 10, 20], -100)).toBe(0);
 		expect(findClosest([0, 10, 20], 5.01)).toBe(10);
 		expect(findClosest([0, 10, 20], 10)).toBe(10);
 		expect(findClosest([0, 10, 20], 16)).toBe(20);
 		expect(findClosest(nested, 11, 'foo.bar')).toEqual({foo: {bar: 10}});
+		expect(findClosest(nested, 11, ['foo', 'bar'])).toEqual({foo: {bar: 10}});
+		expect(findClosest(names, 'dan', levenshtein.get)).toBe('don');
 	});
 });
 
@@ -156,5 +163,5 @@ describe('defaultCompare', () => {
 		expect(defaultCompare(-10, 10)).toBe(20);
 		expect(defaultCompare(10, -10)).toBe(20);
 		expect(defaultCompare(0.5, -10)).toBe(10.5);
-	})
+	});
 });

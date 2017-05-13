@@ -14,6 +14,7 @@ export const defaultCompare = (n1, n2) => Math.abs(n1 - n2);
  * from the first argument is used instead of the entire first argument value.
  *
  * @param {String} property
+ * @return {Number}
  */
 const createComparerForProperty = (property) => (n1Object, n2) =>
 	defaultCompare(get(n1Object, property), n2);
@@ -61,6 +62,16 @@ export const findClosestIndex = (haystack, needle, comparer = defaultCompare) =>
 	return closest.index;
 };
 
+/**
+ * A wrapper around `findClosestIndex`.
+ *
+ * Returns the actual array item instead of its index.
+ *
+ * @param {Array} array
+ * @param {*} needle
+ * @param {Function|String|Array} [comparer]
+ * @return {*}
+ */
 export const findClosest = (array, needle, comparer) =>
 	array[findClosestIndex(array, needle, comparer)];
 

@@ -1,8 +1,8 @@
 import findClosest, {
 	findClosest as findClosestNamed,
 	findClosestIndex,
-	defaultCompare
-} from './index';
+	defaultComparer
+} from './findClosest';
 import levenshtein from 'fast-levenshtein';
 
 
@@ -106,7 +106,7 @@ describe('findClosestIndex', () => {
 				{product: {price: 30}}
 			];
 			const comparer = (item, needle) =>
-				defaultCompare(item.product.price, needle);
+				defaultComparer(item.product.price, needle);
 
 			expect(findClosestIndex(array, 22, comparer)).toBe(2);
 		});
@@ -156,12 +156,12 @@ describe('findClosest', () => {
 	});
 });
 
-describe('defaultCompare', () => {
+describe('defaultComparer', () => {
 	test('returns the difference between two numbers', () => {
-		expect(defaultCompare(0, 10)).toBe(10);
-		expect(defaultCompare(10, 0)).toBe(10);
-		expect(defaultCompare(-10, 10)).toBe(20);
-		expect(defaultCompare(10, -10)).toBe(20);
-		expect(defaultCompare(0.5, -10)).toBe(10.5);
+		expect(defaultComparer(0, 10)).toBe(10);
+		expect(defaultComparer(10, 0)).toBe(10);
+		expect(defaultComparer(-10, 10)).toBe(20);
+		expect(defaultComparer(10, -10)).toBe(20);
+		expect(defaultComparer(0.5, -10)).toBe(10.5);
 	});
 });

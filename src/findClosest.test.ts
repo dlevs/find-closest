@@ -1,10 +1,9 @@
 import findClosest, {
-	findClosest as findClosestNamed,
+	findClosest as destructuredFindClosest,
 	findClosestIndex,
 	defaultComparer
 } from './findClosest';
-import levenshtein from 'fast-levenshtein';
-
+import { get as levenshtein } from 'fast-levenshtein';
 
 describe('findClosestIndex', () => {
 	describe('meta', () => {
@@ -49,9 +48,6 @@ describe('findClosestIndex', () => {
 				expect(findClosestIndex(array, 2)).toBe(1);
 			});
 			test('doesn\'t round up/ down at halfway points', () => {
-				// This test is not a requirement; it is just documenting current
-				// behaviour. If rounding were to be done, the function becomes much
-				// more complex. For many use cases, it is unnecessary.
 				expect(findClosestIndex([10, 20], 15)).toBe(0);
 				expect(findClosestIndex([20, 10], 15)).toBe(0);
 			});
@@ -64,46 +60,13 @@ describe('findClosestIndex', () => {
 		});
 	});
 
-	describe('findClosestIndex(Array, Number, String)', () => {
-		test('string getters work for shallow properties', () => {
-			const array = [
-				{price: 0},
-				{price: 10},
-				{price: 20},
-				{price: 30}
-			];
-			expect(findClosestIndex(array, 22, 'price')).toBe(2);
-		});
-		test('string getters work for nested properties', () => {
-			const array = [
-				{product: {price: 0}},
-				{product: {price: 10}},
-				{product: {price: 20}},
-				{product: {price: 30}}
-			];
-			expect(findClosestIndex(array, 22, 'product.price')).toBe(2);
-		});
-	});
-
-	describe('findClosestIndex(Array, Number, Array)', () => {
-		test('array getters work', () => {
-			const array = [
-				{product: {price: 0}},
-				{product: {price: 10}},
-				{product: {price: 20}},
-				{product: {price: 30}}
-			];
-			expect(findClosestIndex(array, 22, ['product', 'price'])).toBe(2);
-		});
-	});
-
 	describe('findClosestIndex(Array, *, Function)', () => {
 		test('simple function getter works', () => {
 			const array = [
-				{product: {price: 0}},
-				{product: {price: 10}},
-				{product: {price: 20}},
-				{product: {price: 30}}
+				{ product: { price: 0 } },
+				{ product: { price: 10 } },
+				{ product: { price: 20 } },
+				{ product: { price: 30 } }
 			];
 			const comparer = (item, needle) =>
 				defaultComparer(item.product.price, needle);
@@ -112,17 +75,17 @@ describe('findClosestIndex', () => {
 		});
 		test('works with a 3rd party levenshtein module', () => {
 			const names = ['jim', 'bob', 'don', 'laura'];
-			expect(findClosestIndex(names, 'dan', levenshtein.get)).toBe(2);
+			expect(findClosestIndex(names, 'dan', levenshtein)).toBe(2);
 		});
 		test('works with a 3rd party levenshtein module for nested properties', () => {
 			const names = [
-				{user: {name: 'jim'}},
-				{user: {name: 'bob'}},
-				{user: {name: 'don'}},
-				{user: {name: 'laura'}}
+				{ user: { name: 'jim' } },
+				{ user: { name: 'bob' } },
+				{ user: { name: 'don' } },
+				{ user: { name: 'laura' } }
 			];
 			const comparer = (item, needle) =>
-				levenshtein.get(item.user.name, needle);
+				levenshtein(item.user.name, needle);
 
 			expect(findClosestIndex(names, 'dan', comparer)).toBe(2);
 		});
@@ -135,24 +98,17 @@ describe('findClosest', () => {
 			expect(findClosest.name).toBe('findClosest');
 		});
 		test('is the default export', () => {
-			expect(findClosestNamed).toBe(findClosest);
+			expect(destructuredFindClosest).toBe(findClosest);
 		});
 	});
 
 	test('works the same as findClosestIndex but returns the actual item', () => {
-		const nested = [
-			{foo: {bar: 0}},
-			{foo: {bar: 10}},
-			{foo: {bar: 20}}
-		];
 		const names = ['jim', 'bob', 'don', 'laura'];
 		expect(findClosest([0, 10, 20], -100)).toBe(0);
 		expect(findClosest([0, 10, 20], 5.01)).toBe(10);
 		expect(findClosest([0, 10, 20], 10)).toBe(10);
 		expect(findClosest([0, 10, 20], 16)).toBe(20);
-		expect(findClosest(nested, 11, 'foo.bar')).toEqual({foo: {bar: 10}});
-		expect(findClosest(nested, 11, ['foo', 'bar'])).toEqual({foo: {bar: 10}});
-		expect(findClosest(names, 'dan', levenshtein.get)).toBe('don');
+		expect(findClosest(names, 'dan', levenshtein)).toBe('don');
 	});
 });
 

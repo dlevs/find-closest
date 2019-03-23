@@ -1,9 +1,7 @@
 import findClosest, {
 	findClosest as destructuredFindClosest,
-	findClosestIndex,
-	defaultComparer
+	findClosestIndex
 } from './findClosest';
-import { get as levenshtein } from 'fast-levenshtein';
 
 describe('findClosestIndex', () => {
 	describe('meta', () => {
@@ -68,26 +66,7 @@ describe('findClosestIndex', () => {
 				{ product: { price: 20 } },
 				{ product: { price: 30 } }
 			];
-			const comparer = (item, needle) =>
-				defaultComparer(item.product.price, needle);
-
-			expect(findClosestIndex(array, 22, comparer)).toBe(2);
-		});
-		test('works with a 3rd party levenshtein module', () => {
-			const names = ['jim', 'bob', 'don', 'laura'];
-			expect(findClosestIndex(names, 'dan', levenshtein)).toBe(2);
-		});
-		test('works with a 3rd party levenshtein module for nested properties', () => {
-			const names = [
-				{ user: { name: 'jim' } },
-				{ user: { name: 'bob' } },
-				{ user: { name: 'don' } },
-				{ user: { name: 'laura' } }
-			];
-			const comparer = (item, needle) =>
-				levenshtein(item.user.name, needle);
-
-			expect(findClosestIndex(names, 'dan', comparer)).toBe(2);
+			expect(findClosestIndex(array, item => item.product.price - 22)).toBe(2);
 		});
 	});
 });
@@ -108,16 +87,5 @@ describe('findClosest', () => {
 		expect(findClosest([0, 10, 20], 5.01)).toBe(10);
 		expect(findClosest([0, 10, 20], 10)).toBe(10);
 		expect(findClosest([0, 10, 20], 16)).toBe(20);
-		expect(findClosest(names, 'dan', levenshtein)).toBe('don');
-	});
-});
-
-describe('defaultComparer', () => {
-	test('returns the difference between two numbers', () => {
-		expect(defaultComparer(0, 10)).toBe(10);
-		expect(defaultComparer(10, 0)).toBe(10);
-		expect(defaultComparer(-10, 10)).toBe(20);
-		expect(defaultComparer(10, -10)).toBe(20);
-		expect(defaultComparer(0.5, -10)).toBe(10.5);
 	});
 });

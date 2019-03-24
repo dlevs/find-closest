@@ -1,51 +1,32 @@
 # find-closest
 
-This module provides functions equivalent to `Array.prototype.find` and `Array.prototype.indexOf`, but for finding the closest value where an exact match may not exist.
-
-TODO: Update this readme.
+This module provides functions equivalent to `Array.prototype.find` and `Array.prototype.findIndex`, but for finding the closest value where an exact match may not exist.
 
 ## Installation
 
 `npm install find-closest`
 
-## API
+## Usage
 
-- [find-closest](#find-closest)
-  - [Installation](#installation)
-  - [API](#api)
-    - [findClosest](#findclosest)
-      - [Basic usage](#basic-usage)
-      - [Compare with a custom function](#compare-with-a-custom-function)
-        - [Example: Comparing objects by a key](#example-comparing-objects-by-a-key)
-        - [Example: Comparing likeness of strings](#example-comparing-likeness-of-strings)
-    - [findClosestIndex](#findclosestindex)
+### Basic usage
 
-### findClosest
-
-#### Basic usage
-
-The default behaviour is to compare numbers in an array to the target number provided. The closest match is returned.
+The default behaviour is to compare numbers in an array to the target number provided. The closest match is returned:
 
 ```javascript
-import findClosest from 'find-closest';
+import { findClosest, findClosestIndex } from 'find-closest';
 
-findClosest([0, 10, 20], 12);
-// returns 10
+findClosest([0, 10, 20, 30], 12);
+// => 10
+
+findClosestIndex([0, 10, 20, 30], 12);
+// => 1
 ```
 
-#### Compare with a custom function
+### More complex arrays
 
-To compare values other than numbers, a comparison function may be passed as the third argument to `findClosest`. This is invoked for each item in the array.
+The second argument to `findClosest` is always a number [(or an object that defines a number and some extra restrictions)](#needle-options). An optional `mapCallback` function can be used to compare this to non-number values, such as in these examples:
 
-The comparison function is passed the current array item and the target value to find. It is expected to return a number indicating how similar the two values are. The results of this function determine which array item is returned by `findClosest`:
-
-- The item with the lowest result is returned.
-- If multiple items in the array share the lowest result, the first occurrence is returned.
-- `0` indicates the closest possible likeness.
-
-##### Example: Comparing objects by a key
-
-This example shows how to compare objects by a key:
+#### Example: Array of objects
 
 ```javascript
 const pets = [
@@ -53,36 +34,88 @@ const pets = [
     { name: 'Biscuit', age: 6 },
     { name: 'Wilbur', age: 12 }
 ];
-const ageComparer = ({ age }, targetAge) =>
-    Math.abs(age - targetAge);
 
-findClosest(pets, 4, ageComparer);
-// returns object for Biscuit
-
-findClosest(pets, 11, ageComparer);
-// returns object for Fluffy
+findClosest(pets, 7, ({ age }) => age);
+// => { name: 'Biscuit', age: 6 }
 ```
 
-##### Example: Comparing likeness of strings
+#### Example: Array of strings
 
-The following example shows usage with a third-party levenshtein distance module, installed by running `npm install fast-levenshtein`. This compares the similarity of strings.
+##### String length
+
+```javascript
+findClosest(
+  ['foo', 'bar', 'longer'],
+  10,
+  ({ length }) => length
+);
+// => 'longer'
+```
+
+##### String likeness
+
+This example makes use of the [fast-levenshtein](https://www.npmjs.com/package/fast-levenshtein) package to compare strings.
 
 ```javascript
 import levenshtein from 'fast-levenshtein';
 
-const names = ['jim', 'bob', 'don', 'laura'];
-
-findClosest(names, 'dan', levenshtein.get);
-// returns 'don'
+findClosest(
+  ['jim', 'bob', 'don', 'laura'],
+  0,
+  str => levenshtein.get(str, 'dan')
+);
+// => 'don'
 ```
 
-### findClosestIndex
+### Needle options
 
-Like [findClosest](#findclosest), except it returns the index instead of the value from the array.
+The second argument (the "needle" to find in the "haystack" array) may be either a number, or an object with extra rules.
+
+#### options.target
+
+Define the target value to find. These two are equivalent:
 
 ```javascript
-import { findClosestIndex } from 'find-closest';
-
-findClosestIndex([0, 10, 20], 12);
-// returns 1
+findClosest([0, 10, 20, 30], 12); // => 10
+findClosest([0, 10, 20, 30], { target: 12 }); // => 10
 ```
+
+However, with this object notation, additional restrictions can be applied…
+
+#### options.min
+
+Define a minimum value to match. In this example, the closest value to 12 that is not also lower than 12 will be returned:
+
+```javascript
+findClosest([0, 10, 20, 30], { target: 12, min: 12 });
+// => 20
+```
+
+#### options.max
+
+Define a maximum value to match.
+
+```javascript
+findClosest([0, 10, 20, 30], { target: 16, max: 19 });
+// => 10
+```
+
+#### options.tieBreaker
+
+When two options are equally close to the `target`, the `tieBreaker` function can be used to determine which is preferred.
+
+```javascript
+findClosest([0, 10, 20, 30], {
+  target: 15,
+  tieBreaker: (a, b) => a < b
+});
+// => 10
+
+findClosest([0, 10, 20, 30], {
+  target: 15,
+  tieBreaker: (a, b) => a > b
+});
+// => 20
+```
+
+Note, for arrays of non-number values, the `tieBreaker` function is passed the number representation of each item in the array as derived from the third argument mapping function, not the array items themselves.

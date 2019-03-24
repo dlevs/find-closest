@@ -1,27 +1,60 @@
+interface NeedleObject {
+	target: number;
+	min?: number;
+	max?: number;
+	/**
+	 * Determine which of two values that are equally close to the `target` value
+	 * should be preferred.
+	 *
+	 * Return `true` if `potentialNewClosest` is the preferred "closest" value.
+	 */
+	tieBreaker?(potentialNewClosest: number, currentClosest: number): boolean;
+}
+type Needle = NeedleObject | number;
 type MapCallback<T> = (value: T, index: number, array: T[]) => number;
 
 function baseFindClosestIndex<T>(
 	haystack: (T | number)[],
-	needle: number,
+	needle: Needle,
 	mapCallback?: MapCallback<T>
 ): number {
+	const needleObject = typeof needle === 'number'
+		? { target: needle }
+		: needle;
+	const { target, min, max, tieBreaker } = needleObject;
 	let closest = {
 		index: -1,
-		distance: Number.POSITIVE_INFINITY
+		distance: Number.POSITIVE_INFINITY,
+		value: 0
 	};
 
 	for (let i = 0; i < haystack.length; i++) {
 		const value = mapCallback
 			? mapCallback(haystack[i] as T, i, haystack as T[])
 			: haystack[i] as number;
-		const distance = Math.abs(value - needle);
+
+		if (min !== undefined && value < min) {
+			continue;
+		}
+
+		if (max !== undefined && value > max) {
+			continue;
+		}
+
+		const distance = Math.abs(value - target);
 
 		if (distance === 0) {
 			return i;
 		}
 
-		if (distance < closest.distance) {
-			closest = { index: i, distance };
+		if (
+			distance === closest.distance &&
+			tieBreaker &&
+			tieBreaker(value, closest.value)
+		) {
+			closest = { index: i, distance, value };
+		} else if (distance < closest.distance) {
+			closest = { index: i, distance, value };
 		}
 	}
 
@@ -29,21 +62,21 @@ function baseFindClosestIndex<T>(
 }
 
 /**
- * Returns the index of the item in an array that is closest in likeness to the
- * `needle` parameter.
+ * Returns the index of the item in an array that is closest to the value
+ * specified by the `needle` argument.
  */
-export function findClosestIndex(haystack: number[], needle: number): number;
-export function findClosestIndex<T>(haystack: T[], needle: number, mapCallback: MapCallback<T>): number;
-export function findClosestIndex<T>(haystack: (T | number)[], needle: number, mapCallback?: MapCallback<T>): number {
+export function findClosestIndex(haystack: number[], needle: Needle): number;
+export function findClosestIndex<T>(haystack: T[], needle: Needle, mapCallback: MapCallback<T>): number;
+export function findClosestIndex<T>(haystack: (T | number)[], needle: Needle, mapCallback?: MapCallback<T>): number {
 	return baseFindClosestIndex(haystack, needle, mapCallback);
 }
 
 /**
- * Returns the item in an array that is closest in likeness to the `needle`
- * parameter.
+ * Returns the item in an array that is closest to the value specified by the
+ * `needle` argument.
  */
-export function findClosest(haystack: number[], needle: number): number;
-export function findClosest<T>(haystack: T[], needle: number, mapCallback: MapCallback<T>): T;
-export function findClosest<T>(haystack: (T | number)[], needle: number, mapCallback?: MapCallback<T>): T | number {
+export function findClosest(haystack: number[], needle: Needle): number;
+export function findClosest<T>(haystack: T[], needle: Needle, mapCallback: MapCallback<T>): T;
+export function findClosest<T>(haystack: (T | number)[], needle: Needle, mapCallback?: MapCallback<T>): T | number {
 	return haystack[baseFindClosestIndex(haystack, needle, mapCallback)];
 }

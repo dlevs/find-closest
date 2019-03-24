@@ -2,18 +2,23 @@
 
 This module provides functions equivalent to `Array.prototype.find` and `Array.prototype.indexOf`, but for finding the closest value where an exact match may not exist.
 
+TODO: Update this readme.
+
 ## Installation
 
 `npm install find-closest`
 
 ## API
 
-- [findClosest](#findclosest)
-  - [Basic usage](#basic-usage)
-  - [Compare with a custom function](#compare-with-a-custom-function)
-    - [Example: Comparing objects by a key](#example-comparing-objects-by-a-key)
-    - [Example: Comparing likeness of strings](#example-comparing-likeness-of-strings)
-- [findClosestIndex](#findclosestindex)
+- [find-closest](#find-closest)
+  - [Installation](#installation)
+  - [API](#api)
+    - [findClosest](#findclosest)
+      - [Basic usage](#basic-usage)
+      - [Compare with a custom function](#compare-with-a-custom-function)
+        - [Example: Comparing objects by a key](#example-comparing-objects-by-a-key)
+        - [Example: Comparing likeness of strings](#example-comparing-likeness-of-strings)
+    - [findClosestIndex](#findclosestindex)
 
 ### findClosest
 

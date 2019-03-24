@@ -1,15 +1,6 @@
-import findClosest, {
-	findClosest as destructuredFindClosest,
-	findClosestIndex
-} from './findClosest';
+import { findClosest, findClosestIndex } from './findClosest';
 
 describe('findClosestIndex', () => {
-	describe('meta', () => {
-		test('function is named', () => {
-			expect(findClosestIndex.name).toBe('findClosestIndex');
-		});
-	});
-
 	describe('findClosestIndex(Array, Number)', () => {
 		describe('exact matches', () => {
 			test('returns an exact match if found', () => {
@@ -58,34 +49,44 @@ describe('findClosestIndex', () => {
 		});
 	});
 
-	describe('findClosestIndex(Array, *, Function)', () => {
-		test('simple function getter works', () => {
-			const array = [
-				{ product: { price: 0 } },
-				{ product: { price: 10 } },
-				{ product: { price: 20 } },
-				{ product: { price: 30 } }
-			];
-			expect(findClosestIndex(array, item => item.product.price - 22)).toBe(2);
+	describe('findClosestIndex(Array, Number, Function)', () => {
+		test('basic mapping callback functionality works', () => {
+			expect(findClosestIndex(
+				[
+					{ product: { price: 0 } },
+					{ product: { price: 10 } },
+					{ product: { price: 20 } },
+					{ product: { price: 30 } }
+				],
+				22,
+				item => item.product.price
+			)).toBe(2);
+		});
+
+		test('mapping callback parameters are correct', () => {
+			const array = [6];
+			findClosestIndex(
+				array,
+				6,
+				(value, i, collection) => {
+					expect(value).toBe(6);
+					expect(i).toBe(0);
+					expect(collection).toBe(array);
+
+					return value;
+				}
+			);
 		});
 	});
 });
 
 describe('findClosest', () => {
-	describe('meta', () => {
-		test('function is named', () => {
-			expect(findClosest.name).toBe('findClosest');
-		});
-		test('is the default export', () => {
-			expect(destructuredFindClosest).toBe(findClosest);
-		});
-	});
-
 	test('works the same as findClosestIndex but returns the actual item', () => {
-		const names = ['jim', 'bob', 'don', 'laura'];
 		expect(findClosest([0, 10, 20], -100)).toBe(0);
 		expect(findClosest([0, 10, 20], 5.01)).toBe(10);
 		expect(findClosest([0, 10, 20], 10)).toBe(10);
 		expect(findClosest([0, 10, 20], 16)).toBe(20);
+		expect(findClosest(['foo', 'hello', 'bar'], 10, str => str.length)).toBe('hello');
+		expect(findClosest([], 10)).toBeUndefined();
 	});
 });

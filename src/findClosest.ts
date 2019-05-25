@@ -13,6 +13,8 @@ interface NeedleObject {
 type Needle = NeedleObject | number;
 type MapCallback<T> = (value: T, index: number, array: T[]) => number;
 
+// TODO: Look into creating a "sortedFindClosest", like https://lodash.com/docs/4.17.11#sortedIndexOf
+
 function baseFindClosestIndex<T>(
 	haystack: (T | number)[],
 	needle: Needle,

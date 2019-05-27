@@ -131,9 +131,44 @@ describe('findClosest', () => {
 			expect(findClosest([10, 11, 12], { target: 10, max: 2 })).toBeUndefined();
 		});
 
-		test('tieBreaker', () => {
-			expect(findClosest([-2, 2], { target: 0, tieBreaker: (a, b) => a < b })).toBe(-2);
-			expect(findClosest([-2, 2], { target: 0, tieBreaker: (a, b) => a > b })).toBe(2);
+		describe('tieBreaker', () => {
+			test('breaks tie where one exists', () => {
+				expect(findClosest([-2, 2], { target: 0, tieBreaker: (a, b) => a < b })).toBe(-2);
+				expect(findClosest([-2, 2], { target: 0, tieBreaker: (a, b) => a > b })).toBe(2);
+			});
+
+			test('works with mapCallback argument', () => {
+				const sizes = [{ size: -2 }, { size: 2 }];
+
+				expect(findClosest(
+					sizes,
+					{ target: 0, tieBreaker: (a, b) => a < b },
+					({ size }) => size
+				)).toBe(sizes[0]);
+
+				expect(findClosest(
+					sizes,
+					{ target: 0, tieBreaker: (a, b) => a > b },
+					({ size }) => size
+				)).toBe(sizes[1]);
+			});
+
+			test('expected result returned for 0 or 1 argument', () => {
+				expect(findClosest([], { target: 0, tieBreaker: (a, b) => a > b })).toBe(undefined);
+				expect(findClosest([2], { target: 0, tieBreaker: (a, b) => a > b })).toBe(2);
+			});
+
+			test('returning false acts the same as having no tie breaker', () => {
+				expect(findClosest([-2, 2], { target: 0, tieBreaker: () => false })).toBe(-2);
+				expect(findClosest([6], { target: 0, tieBreaker: () => false })).toBe(6);
+			});
+
+			test('returning true will pick the last best non-zero match', () => {
+				// If this behavior is desired, it's probably better to just reverse the input array.
+				// TODO: Is this a useful option to add to the options?
+				expect(findClosest([-2, 2], { target: 0, tieBreaker: () => true })).toBe(2);
+				expect(findClosest([-2, 2], { target: -2, tieBreaker: () => true })).toBe(-2);
+			});
 		});
 	});
 });

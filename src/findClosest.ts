@@ -23,7 +23,12 @@ function baseFindClosestIndex<T>(
 	const needleObject = typeof needle === 'number'
 		? { target: needle }
 		: needle;
-	const { target, min, max, tieBreaker } = needleObject;
+	const {
+		target,
+		min = Number.NEGATIVE_INFINITY,
+		max = Number.POSITIVE_INFINITY,
+		tieBreaker = () => false
+	} = needleObject;
 	let closest = {
 		index: -1,
 		distance: Number.POSITIVE_INFINITY,
@@ -35,11 +40,7 @@ function baseFindClosestIndex<T>(
 			? mapCallback(haystack[i] as T, i, haystack as T[])
 			: haystack[i] as number;
 
-		if (min !== undefined && value < min) {
-			continue;
-		}
-
-		if (max !== undefined && value > max) {
+		if (value < min || value > max) {
 			continue;
 		}
 
@@ -50,12 +51,9 @@ function baseFindClosestIndex<T>(
 		}
 
 		if (
-			distance === closest.distance &&
-			tieBreaker &&
-			tieBreaker(value, closest.value)
+			distance < closest.distance ||
+			(distance === closest.distance && tieBreaker(value, closest.value))
 		) {
-			closest = { index: i, distance, value };
-		} else if (distance < closest.distance) {
 			closest = { index: i, distance, value };
 		}
 	}

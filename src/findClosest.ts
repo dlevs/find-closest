@@ -1,7 +1,33 @@
 interface NeedleObject {
+	/**
+	 * The target value to find in the array.
+	 */
 	target: number;
+	/**
+	 * The minimum value to match.
+	 */
 	min?: number;
+	/**
+	 * The maximum value to match.
+	 */
 	max?: number;
+	/**
+	 * TODO: Add this to README.md and test
+	 *
+	 * The minimum difference required between a value from the array and the
+	 * `target` value for them to be considered an absolute match.
+	 *
+	 * If an absolute match is found, it is instantly returned. By setting
+	 * `threshold` to greater than `0`, it is possible that the returned match is
+	 * the the closest to `target` in the array.
+	 */
+	threshold?: number;
+	/**
+	 * TODO: Add this to README.md and test
+	 *
+	 * Start searching from the end of the array.
+	 */
+	reverse?: boolean;
 	/**
 	 * Determine which of two values that are equally close to the `target` value
 	 * should be preferred.
@@ -25,9 +51,11 @@ function baseFindClosestIndex<T>(
 		: needle;
 	const {
 		target,
+		threshold = 0,
 		min = Number.NEGATIVE_INFINITY,
 		max = Number.POSITIVE_INFINITY,
-		tieBreaker = () => false
+		tieBreaker = () => false,
+		reverse = false
 	} = needleObject;
 	let closest = {
 		index: -1,
@@ -35,10 +63,13 @@ function baseFindClosestIndex<T>(
 		value: 0
 	};
 
-	for (let i = 0; i < haystack.length; i++) {
+	for (let rawIndex = 0; rawIndex < haystack.length; rawIndex++) {
+		const index = reverse
+			? haystack.length - 1 - rawIndex
+			: rawIndex;
 		const value = mapCallback
-			? mapCallback(haystack[i] as T, i, haystack as T[])
-			: haystack[i] as number;
+			? mapCallback(haystack[index] as T, index, haystack as T[])
+			: haystack[index] as number;
 
 		if (value < min || value > max) {
 			continue;
@@ -46,15 +77,15 @@ function baseFindClosestIndex<T>(
 
 		const distance = Math.abs(value - target);
 
-		if (distance === 0) {
-			return i;
+		if (distance <= threshold) {
+			return index;
 		}
 
 		if (
 			distance < closest.distance ||
 			(distance === closest.distance && tieBreaker(value, closest.value))
 		) {
-			closest = { index: i, distance, value };
+			closest = { index, distance, value };
 		}
 	}
 

@@ -53,6 +53,21 @@ describe('findClosestIndex', () => {
 				expect(findClosestIndex([60, 80, 90, 100], { target: 88 })).toBe(2);
 			});
 
+			test('threshold', () => {
+				expect(findClosestIndex([10, 12, 16, 20], { target: 15 })).toBe(2);
+				expect(findClosestIndex([10, 12, 16, 20], { target: 15, threshold: 2.99 })).toBe(2);
+				expect(findClosestIndex([10, 12, 16, 20], { target: 15, threshold: 3 })).toBe(1);
+				expect(findClosestIndex([10, 12, 16, 20], { target: 15, threshold: 3, reverse: true })).toBe(2);
+				expect(findClosestIndex([10, 12, 16, 20], { target: 15, threshold: 4.99999, reverse: true })).toBe(2);
+				expect(findClosestIndex([10, 12, 16, 20], { target: 15, threshold: 5, reverse: true })).toBe(3);
+				expect(findClosestIndex([10, 12, 16, 20], { target: 15, threshold: 100, reverse: true })).toBe(3);
+			});
+
+			test('reverse', () => {
+				expect(findClosestIndex([10, 20, 40, 50], { target: 30 })).toBe(1);
+				expect(findClosestIndex([10, 20, 40, 50], { target: 30, reverse: true })).toBe(2);
+			});
+
 			test('min', () => {
 				expect(findClosestIndex([60, 80, 90], { target: 68, min: 65 })).toBe(1);
 				expect(findClosestIndex([1, 2, 3], { target: 10, min: 5 })).toBe(-1);
@@ -71,18 +86,18 @@ describe('findClosestIndex', () => {
 				});
 
 				test('works with mapCallback argument', () => {
-					const sizes = [{ size: -2 }, { size: 2 }];
+					const array = [{ a: -2 }, { a: 2 }];
 
 					expect(findClosestIndex(
-						sizes,
+						array,
 						{ target: 0, tieBreaker: (a, b) => a < b },
-						({ size }) => size
+						({ a }) => a
 					)).toBe(0);
 
 					expect(findClosestIndex(
-						sizes,
+						array,
 						{ target: 0, tieBreaker: (a, b) => a > b },
-						({ size }) => size
+						({ a }) => a
 					)).toBe(1);
 				});
 
@@ -137,6 +152,9 @@ describe('findClosestIndex', () => {
 	});
 });
 
+// Simple checks for `findClosest` are detailed below.
+// In-depth tests should be performed against `findClosestIndex` instead
+// (above), since the core functionality lives there.
 describe('findClosest', () => {
 	test('works the same as findClosestIndex but returns the actual item for basic operations', () => {
 		expect(findClosest([0, 10, 20], -100)).toBe(0);
@@ -153,6 +171,21 @@ describe('findClosest', () => {
 	describe('needle options', () => {
 		test('target', () => {
 			expect(findClosest([60, 80, 90, 100], { target: 88 })).toBe(90);
+		});
+
+		test('threshold', () => {
+			const array = [{ a: 10 }, { a: 12 }, { a: 16 }, { a: 20 }];
+
+			// TODO: Move mapCallback into "Needle" options object? It relates to _what_ is being found.
+			expect(findClosest(array, { target: 15 }, ({ a }) => a)).toBe(array[2]);
+			expect(findClosest(array, { target: 15, threshold: 3 }, ({ a }) => a)).toBe(array[1]);
+		});
+
+		test('reverse', () => {
+			const array = [{ a: 10 }, { a: 20 }, { a: 40 }, { a: 50 }];
+
+			expect(findClosest(array, { target: 30 }, ({ a }) => a)).toBe(array[1]);
+			expect(findClosest(array, { target: 30, reverse: true }, ({ a }) => a)).toBe(array[2]);
 		});
 
 		test('min', () => {

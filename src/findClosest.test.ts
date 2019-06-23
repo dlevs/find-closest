@@ -1,5 +1,6 @@
 import { findClosest, findClosestIndex } from './findClosest';
 
+// TODO: Reduce duplication in these tests.
 describe('findClosestIndex', () => {
 	describe('findClosestIndex(Array, Number)', () => {
 		describe('exact matches', () => {
@@ -68,17 +69,6 @@ describe('findClosestIndex', () => {
 				expect(findClosestIndex([10, 20, 40, 50], { target: 30, reverse: true })).toBe(2);
 			});
 
-			test('min', () => {
-				expect(findClosestIndex([60, 80, 90], { target: 68, min: 65 })).toBe(1);
-				expect(findClosestIndex([1, 2, 3], { target: 10, min: 5 })).toBe(-1);
-			});
-
-			test('max', () => {
-				expect(findClosestIndex([60, 80, 90], { target: 88, max: 85 })).toBe(1);
-				expect(findClosestIndex([1, 2, 3], { target: 10, max: 2 })).toBe(1);
-				expect(findClosestIndex([10, 11, 12], { target: 10, max: 2 })).toBe(-1);
-			});
-
 			describe('tieBreaker', () => {
 				test('breaks tie where one exists', () => {
 					expect(findClosestIndex([-2, 2], { target: 0, tieBreaker: (a, b) => a < b })).toBe(0);
@@ -99,6 +89,12 @@ describe('findClosestIndex', () => {
 						{ target: 0, tieBreaker: (a, b) => a > b },
 						({ a }) => a
 					)).toBe(1);
+
+					expect(findClosestIndex(['foo', 'hello', 'bar'], 10, str => str.length)).toBe(1);
+					expect(findClosestIndex([2, 4, 6], 10, n => n * 3)).toBe(1);
+					expect(findClosestIndex([60, 80, 90], { target: 68 }, n => n < 65)).toBe(0);
+					expect(findClosestIndex([60, 80, 90], { target: 68 }, n => n > 65)).toBe(1);
+					expect(findClosestIndex([1, 2, 3], { target: 10 }, n => n > 5)).toBe(-1);
 				});
 
 				test('expected result returned for 0 or 1 argument', () => {
@@ -164,8 +160,12 @@ describe('findClosest', () => {
 		expect(findClosest([], 10)).toBeUndefined();
 	});
 
-	test('map callback works', () => {
+	test('filter / map callback works', () => {
 		expect(findClosest(['foo', 'hello', 'bar'], 10, str => str.length)).toBe('hello');
+		expect(findClosest([2, 4, 6], 10, n => n * 3)).toBe(4);
+		expect(findClosest([60, 80, 90], { target: 68 }, n => n < 65)).toBe(60);
+		expect(findClosest([60, 80, 90], { target: 68 }, n => n > 65)).toBe(80);
+		expect(findClosest([1, 2, 3], { target: 10 }, n => n > 5)).toBeUndefined();
 	});
 
 	describe('needle options', () => {
@@ -186,17 +186,6 @@ describe('findClosest', () => {
 
 			expect(findClosest(array, { target: 30 }, ({ a }) => a)).toBe(array[1]);
 			expect(findClosest(array, { target: 30, reverse: true }, ({ a }) => a)).toBe(array[2]);
-		});
-
-		test('min', () => {
-			expect(findClosest([60, 80, 90], { target: 68, min: 65 })).toBe(80);
-			expect(findClosest([1, 2, 3], { target: 10, min: 5 })).toBeUndefined();
-		});
-
-		test('max', () => {
-			expect(findClosest([60, 80, 90], { target: 88, max: 85 })).toBe(80);
-			expect(findClosest([1, 2, 3], { target: 10, max: 2 })).toBe(2);
-			expect(findClosest([10, 11, 12], { target: 10, max: 2 })).toBeUndefined();
 		});
 
 		describe('tieBreaker', () => {

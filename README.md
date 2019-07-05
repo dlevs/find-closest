@@ -67,18 +67,18 @@ findClosest(pets, 7, ({ age }) => {
 // => { name: 'Fluffy', age: 10 }
 ```
 
-**Note** that, unless the values in the array are all numbers, the `filterMapFn` cannot return `true`.
+**Note** that, unless all the values in the array are numbers, the `filterMapFn` cannot return `true`.
 
 #### Performance
 
-The `filterMapFn` argument has potential performance gains over calling `.map().filter()` on the input array:
+The `filterMapFn` argument has potential performance gains over manually calling `.map().filter()` on the input array:
 
-- Mapping and filtering happen in a single pass.
+- Mapping _and_ filtering happens in a single pass.
 - The mapping is executed lazily. If a perfect match is found before reaching the end of the array, unnecessary calculations are avoided.
 
 ### Needle options
 
-The second argument (the "needle" to find in the "haystack" array) may be either a number, or an object with extra rules.
+The second argument to `findClosest` (the "needle" to find in the "haystack" array) may be either a number, or an object with extra rules.
 
 #### options.target
 
@@ -109,11 +109,11 @@ findClosest([0, 10, 20, 30], {
 // => 20
 ```
 
-**Note**, for arrays of non-number values, the `tieBreaker` function is passed the number representation of each item in the array as derived from the third argument mapping function, not the array items themselves.
+**Note**, for arrays of non-number values, a `tieBreaker` function is passed the number representation of each item in the array as derived from the third argument mapping function, not the array items themselves.
 
 #### options.threshold
 
-If a value is found that is equal to the target value, it is immediately returned without searching the rest of the array. For performance reasons, you may wish for the same behaviour for values that are "close enough" (but not perfect) matches. This can be done with the `threshold` option:
+By default, if a value is found that is equal to the target value, it is immediately returned without searching the rest of the array. For performance reasons, you may want the same behavior for values that are "close enough" (but not perfect) matches. This can be done with the `threshold` option:
 
 ```javascript
 findClosest([0, 10, 20, 30, ...aVeryVeryLongArray], {

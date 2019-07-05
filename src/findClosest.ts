@@ -38,7 +38,6 @@ type FilterMapFnStrict<T> = IterationFn<T, number | false>;
 function baseFindClosestIndex<T>(
 	haystack: T[],
 	needle: Needle,
-	// TODO: Document the filter capabilities
 	filterMapFn?: FilterMapFn<T>
 ) {
 	const needleObject = typeof needle === 'number'
@@ -66,14 +65,20 @@ function baseFindClosestIndex<T>(
 			const mappedValue = filterMapFn(value, index, haystack);
 
 			switch (mappedValue) {
-				case true: break;
-				case false: continue;
-				default: value = mappedValue;
+				case true:
+					break;
+				case false:
+					continue;
+				default:
+					value = mappedValue;
 			}
 		}
 
+		// This statement should never be triggered in TypeScript if the overloaded function
+		// signatures are correct.
+		// It's a little complex, so TS is not certain that `value` is a number.
 		if (typeof value !== 'number') {
-			throw new TypeError(`Expected a number value. Received ${JSON.stringify(value)}.`);
+			throw new TypeError(`Expected a number value. Received ${value}.`);
 		}
 
 		const distance = Math.abs(value - target);
@@ -136,3 +141,5 @@ export function findClosest<T>(
 ): T | number {
 	return haystack[baseFindClosestIndex(haystack, needle, filterMapFn)];
 }
+
+export default findClosest;

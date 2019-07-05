@@ -22,11 +22,9 @@ findClosestIndex([0, 10, 20, 30], 12);
 // => 1
 ```
 
-### More complex arrays
+### Mapping and filtering
 
-The second argument to `findClosest` is always a number [(or an object that defines a number and some extra restrictions)](#needle-options). An optional `mapCallback` function can be used to compare this to non-number values, such as in these examples:
-
-#### Example: Array of objects
+An optional `filterMapFn` function can be passed to compare non-number values to the target:
 
 ```javascript
 const pets = [
@@ -39,33 +37,44 @@ findClosest(pets, 7, ({ age }) => age);
 // => { name: 'Biscuit', age: 6 }
 ```
 
-#### Example: Array of strings
-
-##### String length
+Additionally, returning `false` from this function omits the value:
 
 ```javascript
-findClosest(
-  ['foo', 'bar', 'longer'],
-  10,
-  ({ length }) => length
-);
-// => 'longer'
+const isGreaterThan10 = n => n > 10;
+
+findClosest([0, 10, 20, 30], 12);
+// => 10
+
+findClosest([0, 10, 20, 30], 12, isGreaterThan10);
+// => 20
 ```
 
-##### String likeness
-
-This example makes use of the [fast-levenshtein](https://www.npmjs.com/package/fast-levenshtein) package to compare strings.
+The filtering _and_ mapping can be performed by the same function:
 
 ```javascript
-import levenshtein from 'fast-levenshtein';
+const pets = [
+    { name: 'Fluffy', age: 10 },
+    { name: 'Biscuit', age: 6 },
+    { name: 'Wilbur', age: 12 }
+];
 
-findClosest(
-  ['jim', 'bob', 'don', 'laura'],
-  0,
-  str => levenshtein.get(str, 'dan')
-);
-// => 'don'
+findClosest(pets, 7, ({ age }) => {
+  if (age < 7) {
+    return false;
+  }
+  return age;
+});
+// => { name: 'Fluffy', age: 10 }
 ```
+
+**Note** that, unless the values in the array are all numbers, the `filterMapFn` cannot return `true`.
+
+#### Performance
+
+The `filterMapFn` argument has potential performance gains over calling `.map().filter()` on the input array:
+
+- Mapping and filtering happen in a single pass.
+- The mapping is executed lazily. If a perfect match is found before reaching the end of the array, unnecessary calculations are avoided.
 
 ### Needle options
 
@@ -81,24 +90,6 @@ findClosest([0, 10, 20, 30], { target: 12 }); // => 10
 ```
 
 However, with this object notation, additional restrictions can be applied…
-
-#### options.min
-
-Define a minimum value to match. In this example, the closest value to 12 that is not also lower than 12 will be returned:
-
-```javascript
-findClosest([0, 10, 20, 30], { target: 12, min: 12 });
-// => 20
-```
-
-#### options.max
-
-Define a maximum value to match.
-
-```javascript
-findClosest([0, 10, 20, 30], { target: 16, max: 19 });
-// => 10
-```
 
 #### options.tieBreaker
 
@@ -118,4 +109,30 @@ findClosest([0, 10, 20, 30], {
 // => 20
 ```
 
-Note, for arrays of non-number values, the `tieBreaker` function is passed the number representation of each item in the array as derived from the third argument mapping function, not the array items themselves.
+**Note**, for arrays of non-number values, the `tieBreaker` function is passed the number representation of each item in the array as derived from the third argument mapping function, not the array items themselves.
+
+#### options.threshold
+
+If a value is found that is equal to the target value, it is immediately returned without searching the rest of the array. For performance reasons, you may wish for the same behaviour for values that are "close enough" (but not perfect) matches. This can be done with the `threshold` option:
+
+```javascript
+findClosest([0, 10, 20, 30, ...aVeryVeryLongArray], {
+  target: 11,
+  threshold: 2
+});
+// => 10
+```
+
+In the above example, none of the values after `10` are iterated over.
+
+#### options.reverse
+
+The `reverse` option starts the search from the end of the array:
+
+```javascript
+findClosest([0, 5, 15, 20], 10);
+// => 5
+
+findClosest([0, 5, 15, 20], { target: 10, reverse: true });
+// => 15
+```

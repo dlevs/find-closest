@@ -4,8 +4,6 @@ interface NeedleObject {
 	 */
 	target: number;
 	/**
-	 * TODO: Add this to README.md and test
-	 *
 	 * The minimum difference required between a value from the array and the
 	 * `target` value for them to be considered an absolute match.
 	 *
@@ -15,8 +13,6 @@ interface NeedleObject {
 	 */
 	threshold?: number;
 	/**
-	 * TODO: Add this to README.md and test
-	 *
 	 * Start searching from the end of the array.
 	 */
 	reverse?: boolean;
@@ -74,9 +70,9 @@ function baseFindClosestIndex<T>(
 			}
 		}
 
-		// This statement should never be triggered in TypeScript if the overloaded function
-		// signatures are correct.
-		// It's a little complex, so TS is not certain that `value` is a number.
+		// This statement should never be triggered in TypeScript if the overloaded
+		// function signatures are correct. It's a little complex, so TS is not
+		// certain that `value` is a number.
 		if (typeof value !== 'number') {
 			throw new TypeError(`Expected a number value. Received ${value}.`);
 		}

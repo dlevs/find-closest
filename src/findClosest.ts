@@ -85,6 +85,7 @@ function baseFindClosestIndex<T>(
 
 		if (
 			distance < closest.distance ||
+			// TODO: tieBreaker would be more flexible with a way to also access the raw array items being compared
 			(distance === closest.distance && tieBreaker(value, closest.value))
 		) {
 			closest = { index, distance, value };

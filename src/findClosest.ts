@@ -1,30 +1,3 @@
-interface NeedleObject {
-	/**
-	 * The target value to find in the array.
-	 */
-	target: number;
-	/**
-	 * The minimum difference required between a value from the array and the
-	 * `target` value for them to be considered an absolute match.
-	 *
-	 * If an absolute match is found, it is instantly returned. By setting
-	 * `threshold` to greater than `0`, it is possible that the returned match is
-	 * the the closest to `target` in the array.
-	 */
-	threshold?: number;
-	/**
-	 * Start searching from the end of the array.
-	 */
-	reverse?: boolean;
-	/**
-	 * Determine which of two values that are equally close to the `target` value
-	 * should be preferred.
-	 *
-	 * Return `true` if `potentialNewClosest` is the preferred "closest" value.
-	 */
-	tieBreaker?(potentialNewClosest: number, currentClosest: number): boolean;
-}
-type Needle = NeedleObject | number;
 type IterationFn<T, R> = (value: T, index: number, array: T[]) => R;
 type FilterMapFn<T> = IterationFn<T, number | boolean>;
 type FilterMapFnStrict<T> = IterationFn<T, number | false>;
@@ -33,28 +6,16 @@ type FilterMapFnStrict<T> = IterationFn<T, number | false>;
 
 function baseFindClosestIndex<T>(
 	haystack: T[],
-	needle: Needle,
+	needle: number,
 	filterMapFn?: FilterMapFn<T>
 ) {
-	const needleObject = typeof needle === 'number'
-		? { target: needle }
-		: needle;
-	const {
-		target,
-		threshold = 0,
-		tieBreaker = () => false,
-		reverse = false
-	} = needleObject;
 	let closest = {
 		index: -1,
 		distance: Number.POSITIVE_INFINITY,
 		value: 0
 	};
 
-	for (let rawIndex = 0; rawIndex < haystack.length; rawIndex++) {
-		const index = reverse
-			? haystack.length - 1 - rawIndex
-			: rawIndex;
+	for (let index = 0; index < haystack.length; index++) {
 		let value: T | number = haystack[index];
 
 		if (filterMapFn) {
@@ -77,17 +38,13 @@ function baseFindClosestIndex<T>(
 			throw new TypeError(`Expected a number value. Received ${value}.`);
 		}
 
-		const distance = Math.abs(value - target);
+		const distance = Math.abs(value - needle);
 
-		if (distance <= threshold) {
+		if (distance === 0) {
 			return index;
 		}
 
-		if (
-			distance < closest.distance ||
-			// TODO: tieBreaker would be more flexible with a way to also access the raw array items being compared
-			(distance === closest.distance && tieBreaker(value, closest.value))
-		) {
+		if (distance < closest.distance) {
 			closest = { index, distance, value };
 		}
 	}
@@ -101,17 +58,17 @@ function baseFindClosestIndex<T>(
  */
 export function findClosestIndex(
 	haystack: number[],
-	needle: Needle,
+	needle: number,
 	filterMapFn?: FilterMapFn<number>
 ): number;
 export function findClosestIndex<T>(
 	haystack: T[],
-	needle: Needle,
+	needle: number,
 	filterMapFn: FilterMapFnStrict<T>
 ): number;
 export function findClosestIndex<T>(
 	haystack: T[],
-	needle: Needle,
+	needle: number,
 	filterMapFn?: FilterMapFn<T>
 ): number {
 	return baseFindClosestIndex(haystack, needle, filterMapFn);
@@ -123,17 +80,17 @@ export function findClosestIndex<T>(
  */
 export function findClosest(
 	haystack: number[],
-	needle: Needle,
+	needle: number,
 	filterMapFn?: FilterMapFn<number>
 ): number;
 export function findClosest<T>(
 	haystack: T[],
-	needle: Needle,
+	needle: number,
 	filterMapFn: FilterMapFnStrict<T>
 	): T;
 export function findClosest<T>(
 	haystack: T[],
-	needle: Needle,
+	needle: number,
 	filterMapFn?: FilterMapFn<T>
 ): T | number {
 	return haystack[baseFindClosestIndex(haystack, needle, filterMapFn)];

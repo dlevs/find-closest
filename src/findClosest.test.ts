@@ -64,62 +64,6 @@ runTests('findClosest / findClosestIndex', {
 			]
 		}
 	},
-	'needle options': {
-		target: [
-			{ index: 2, args: [[60, 80, 90, 100], { target: 88 }] },
-		],
-		threshold: [
-			{ index: 2, args: [[10, 12, 16, 20], { target: 15 }] },
-			{ index: 2, args: [[10, 12, 16, 20], { target: 15, threshold: 2.99 }] },
-			{ index: 1, args: [[10, 12, 16, 20], { target: 15, threshold: 3 }] },
-			{ index: 2, args: [[10, 12, 16, 20], { target: 15, threshold: 3, reverse: true }] },
-			{ index: 2, args: [[10, 12, 16, 20], { target: 15, threshold: 4.99999, reverse: true }] },
-			{ index: 3, args: [[10, 12, 16, 20], { target: 15, threshold: 5, reverse: true }] },
-			{ index: 3, args: [[10, 12, 16, 20], { target: 15, threshold: 100, reverse: true }] },
-		],
-		reverse: [
-			{ index: 1, args: [[10, 20, 40, 50], { target: 30 }] },
-			{ index: 2, args: [[10, 20, 40, 50], { target: 30, reverse: true }] },
-		],
-		tieBreaker: {
-			'breaks tie where one exists': [
-				{ index: 0, args: [[-2, 2], { target: 0, tieBreaker: (a: number, b: number) => a < b }] },
-				{ index: 1, args: [[-2, 2], { target: 0, tieBreaker: (a: number, b: number) => a > b }] },
-			],
-			'expected result returned for 0 or 1 argument': [
-				{ index: -1, args: [[], { target: 0, tieBreaker: (a: number, b: number) => a > b }] },
-				{ index: 0, args: [[2], { target: 0, tieBreaker: (a: number, b: number) => a > b }] },
-			],
-			'returning false acts the same as having no tie breaker': [
-				{ index: 0, args: [[-2, 2], { target: 0, tieBreaker: () => false }] },
-				{ index: 0, args: [[6], { target: 0, tieBreaker: () => false }] },
-				{ index: 1, args: [[6, 10, 20], { target: 12, tieBreaker: () => false }] },
-			],
-			'returning true will pick the last best non-zero match': [
-				{ index: 1, args: [[-2, 2, 8], { target: 0, tieBreaker: () => true }] },
-				{ index: 2, args: [[-2, 2, -2, 8], { target: 0, tieBreaker: () => true }] },
-				{ index: 0, args: [[-2, 2, 8], { target: -2, tieBreaker: () => true }] },
-			],
-			'works with mapCallback argument': [
-				{
-					index: 0,
-					args: [
-						[{ a: -2 }, { a: 2 }],
-						{ target: 0, tieBreaker: (a: number, b: number) => a < b },
-						({ a }) => a
-					]
-				},
-				{
-					index: 1,
-					args: [
-						[{ a: -2 }, { a: 2 }],
-						{ target: 0, tieBreaker: (a: number, b: number) => a > b },
-						({ a }) => a
-					]
-				}
-			]
-		}
-	},
 	filterMapFn: {
 		'basic mapping callback functionality works': [
 			{ index: 1, args: [['foo', 'hello', 'bar'], 10, (str: string) => str.length] },

@@ -111,3 +111,8 @@ runTests('findClosest / findClosestIndex', {
 		]
 	}
 });
+
+// TODO: Since removing function overloading, `undefined` must be manually specified. Fix:
+const foo = findClosest([9, 4], 4);
+const foo = findClosest([9, 4], 4, undefined);
+console.log(foo);

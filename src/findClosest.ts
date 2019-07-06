@@ -1,14 +1,28 @@
 type IterationFn<T, R> = (value: T, index: number, array: T[]) => R;
-type FilterMapFn<T> = IterationFn<T, number | boolean>;
-type FilterMapFnStrict<T> = IterationFn<T, number | false>;
 
-// TODO: Look into creating a "sortedFindClosest", like https://lodash.com/docs/4.17.11#sortedIndexOf
+type FilterMapFn<T> = [T] extends [number]
+	// Optional map function. Can return `true`.
+	? IterationFn<T, number | boolean> | undefined
+	// Required map function. Cannot return `true`.
+	: IterationFn<T, number | false>;
 
-function baseFindClosestIndex<T>(
+type FindFn = <T>(
 	haystack: T[],
 	needle: number,
-	filterMapFn?: FilterMapFn<T>
-) {
+	filterMapFn: FilterMapFn<T>
+) => T;
+
+type FindIndexFn = <T>(
+	haystack: T[],
+	needle: number,
+	filterMapFn: FilterMapFn<T>
+) => number;
+
+export const findClosestIndex: FindIndexFn = (
+	haystack,
+	needle,
+	filterMapFn
+) => {
 	let closest = {
 		index: -1,
 		distance: Number.POSITIVE_INFINITY,
@@ -16,16 +30,17 @@ function baseFindClosestIndex<T>(
 	};
 
 	for (let index = 0; index < haystack.length; index++) {
-		let value: T | number = haystack[index];
+		const rawValue = haystack[index];
+		let value: typeof rawValue | number = rawValue;
 
-		if (filterMapFn) {
-			const mappedValue = filterMapFn(value, index, haystack);
+		if (filterMapFn !== undefined) {
+			const mappedValue = filterMapFn(rawValue, index, haystack);
 
 			switch (mappedValue) {
+				case false:
+						continue;
 				case true:
 					break;
-				case false:
-					continue;
 				default:
 					value = mappedValue;
 			}
@@ -50,50 +65,13 @@ function baseFindClosestIndex<T>(
 	}
 
 	return closest.index;
-}
-
-/**
- * Returns the index of the item in an array that is closest to the value
- * specified by the `needle` argument.
- */
-export function findClosestIndex(
-	haystack: number[],
-	needle: number,
-	filterMapFn?: FilterMapFn<number>
-): number;
-export function findClosestIndex<T>(
-	haystack: T[],
-	needle: number,
-	filterMapFn: FilterMapFnStrict<T>
-): number;
-export function findClosestIndex<T>(
-	haystack: T[],
-	needle: number,
-	filterMapFn?: FilterMapFn<T>
-): number {
-	return baseFindClosestIndex(haystack, needle, filterMapFn);
-}
+};
 
 /**
  * Returns the item in an array that is closest to the value specified by the
  * `needle` argument.
  */
-export function findClosest(
-	haystack: number[],
-	needle: number,
-	filterMapFn?: FilterMapFn<number>
-): number;
-export function findClosest<T>(
-	haystack: T[],
-	needle: number,
-	filterMapFn: FilterMapFnStrict<T>
-	): T;
-export function findClosest<T>(
-	haystack: T[],
-	needle: number,
-	filterMapFn?: FilterMapFn<T>
-): T | number {
-	return haystack[baseFindClosestIndex(haystack, needle, filterMapFn)];
-}
+export const findClosest: FindFn = (haystack, needle, filterMapFn) =>
+	haystack[findClosestIndex(haystack, needle, filterMapFn)];
 
 export default findClosest;

@@ -18,6 +18,10 @@ type FindIndexFn = <T>(
 	filterMapFn: FilterMapFn<T>
 ) => number;
 
+/**
+ * Returns the index of the item in an array that is closest to the value
+ * specified by the `needle` argument.
+ */
 export const findClosestIndex: FindIndexFn = (
 	haystack,
 	needle,
@@ -33,12 +37,12 @@ export const findClosestIndex: FindIndexFn = (
 		const rawValue = haystack[index];
 		let value: typeof rawValue | number = rawValue;
 
-		if (filterMapFn !== undefined) {
+		if (filterMapFn) {
 			const mappedValue = filterMapFn(rawValue, index, haystack);
 
 			switch (mappedValue) {
 				case false:
-						continue;
+					continue;
 				case true:
 					break;
 				default:

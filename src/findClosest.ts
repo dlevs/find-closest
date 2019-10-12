@@ -9,13 +9,13 @@ type FilterMapFn<T> = [T] extends [number]
 type FindFn = <T>(
 	haystack: T[],
 	needle: number,
-	filterMapFn: FilterMapFn<T>
+	filterMapFn: FilterMapFn<T>,
 ) => T;
 
 type FindIndexFn = <T>(
 	haystack: T[],
 	needle: number,
-	filterMapFn: FilterMapFn<T>
+	filterMapFn: FilterMapFn<T>,
 ) => number;
 
 /**
@@ -25,12 +25,12 @@ type FindIndexFn = <T>(
 export const findClosestIndex: FindIndexFn = (
 	haystack,
 	needle,
-	filterMapFn
+	filterMapFn,
 ) => {
 	let closest = {
 		index: -1,
 		distance: Number.POSITIVE_INFINITY,
-		value: 0
+		value: 0,
 	};
 
 	for (let index = 0; index < haystack.length; index++) {

@@ -15,11 +15,12 @@
   ],
   "main": "dist/findClosest.js",
   "scripts": {
-    "build": "npm run clean && tsc",
     "clean": "rimraf dist",
     "lint": "tslint --format stylish --project .",
     "test": "jest",
-    "prepublish": "npm test && npm run lint && npm run build"
+    "build": "tsc",
+    "prepublish": "npm run build",
+    "prebuild": "npm test && npm run lint && npm run clean"
   },
   "author": "Daniel Levett",
   "license": "MIT",
@@ -28,12 +29,12 @@
     "url": "https://github.com/dlevs/find-closest"
   },
   "devDependencies": {
-    "@dlevs/tslint-config": "1.0.2",
-    "@types/jest": "23.3.1",
-    "jest": "23.5.0",
-    "rimraf": "2.6.2",
-    "ts-jest": "23.1.4",
-    "tslint": "5.18.0",
-    "typescript": "3.5.2"
+    "@dlevs/tslint-config": "1.0.4",
+    "@types/jest": "24.0.18",
+    "jest": "24.9.0",
+    "rimraf": "3.0.0",
+    "ts-jest": "24.1.0",
+    "tslint": "5.20.0",
+    "typescript": "3.6.4"
   }
 }

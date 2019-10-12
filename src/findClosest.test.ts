@@ -116,3 +116,4 @@ runTests('findClosest / findClosestIndex', {
 // const foo = findClosest([9, 4], 4);
 // const foo = findClosest([9, 4], 4, undefined);
 // console.log(foo);
+// May be fixed in TS eventually: https://github.com/microsoft/TypeScript/issues/12400#issuecomment-347382312

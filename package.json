@@ -14,6 +14,7 @@
     "nearest"
   ],
   "main": "dist/findClosest.js",
+  "files": ["/dist"],
   "scripts": {
     "clean": "rimraf dist",
     "lint": "tslint --format stylish --project .",

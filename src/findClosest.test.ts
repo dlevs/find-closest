@@ -88,10 +88,17 @@ runTests('findClosest / findClosestIndex', {
 			{ index: -1, args: [[1, 2, 3], 10, (n: number) => n > 5] },
 		],
 		'returning true for non-numbers throws an error': [
-			(fn: any) => expect(() => fn(['10'], 10, () => true)).toThrow(),
-			(fn: any) => expect(() => fn(['10'], 10, () => false)).not.toThrow(),
-			(fn: any) => expect(() => fn([10], 10, () => true)).not.toThrow(),
-			(fn: any) => expect(() => fn([10], 10, () => false)).not.toThrow(),
+			// @ts-expect-error
+			(fn: typeof findClosest) => expect(() => fn(['10'], 10, () => true)).toThrow(),
+			(fn: typeof findClosest) => expect(() => fn(['10'], 10, () => false)).not.toThrow(),
+			(fn: typeof findClosest) => expect(() => fn([10], 10, () => true)).not.toThrow(),
+			(fn: typeof findClosest) => expect(() => fn([10], 10, () => false)).not.toThrow(),
+		],
+		'not providing a filterMapFn parameter causes an error for non-number arrays': [
+			// @ts-expect-error
+			(fn: typeof findClosest) => expect(() => fn(['10'], 10).toThrow()),
+			// @ts-expect-error
+			(fn: typeof findClosest) => expect(() => fn([new Date(), new Date(0)], 0).toThrow()),
 		],
 		'mapping callback parameters are correct': [
 			(fn: any) => {

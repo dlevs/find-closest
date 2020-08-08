@@ -35,7 +35,7 @@ export const findClosestIndex: FindIndexFn = (
 
 	for (let index = 0; index < haystack.length; index++) {
 		const rawValue = haystack[index];
-		let value: typeof rawValue | number = rawValue;
+		let value: number;
 
 		if (filterMapFn) {
 			const mappedValue = filterMapFn(rawValue, index, haystack);
@@ -44,17 +44,19 @@ export const findClosestIndex: FindIndexFn = (
 				case false:
 					continue;
 				case true:
+					if (typeof rawValue !== 'number') {
+						throw new TypeError(`\`filterMapFn\` returned \`true\` for non-number value \`${rawValue}\`.`);
+					}
+					value = rawValue;
 					break;
 				default:
 					value = mappedValue;
 			}
-		}
-
-		// This statement should never be triggered in TypeScript if the overloaded
-		// function signatures are correct. It's a little complex, so TS is not
-		// certain that `value` is a number.
-		if (typeof value !== 'number') {
-			throw new TypeError(`Expected a number value. Received ${value}.`);
+		} else {
+			if (typeof rawValue !== 'number') {
+				throw new TypeError(`Array contains non-number value \`${rawValue}\` without a \`filterMapFn\` to map it to a number.`);
+			}
+			value = rawValue;
 		}
 
 		const distance = Math.abs(value - needle);

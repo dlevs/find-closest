@@ -1,6 +1,6 @@
 {
   "name": "find-closest",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "Like Array.prototype.find, but for finding the closest match.",
   "author": "Daniel Levett",
   "license": "MIT",

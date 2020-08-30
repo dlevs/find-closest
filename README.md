@@ -13,61 +13,82 @@ This module provides functions equivalent to `Array.prototype.find` and `Array.p
 The default behaviour is to compare numbers in an array to the target number provided. The closest match is returned:
 
 ```javascript
-import { findClosest, findClosestIndex } from 'find-closest';
+import { findClosest, findClosestIndex } from 'find-closest'
 
-findClosest([0, 10, 20, 30], 12);
+findClosest([0, 10, 20, 30], 12)
 // => 10
 
-findClosestIndex([0, 10, 20, 30], 12);
+findClosestIndex([0, 10, 20, 30], 12)
 // => 1
 ```
 
-### Mapping and filtering
+### Mapping and filtering with `filterMapFn`
+
+#### Mapping
 
 An optional `filterMapFn` function can be passed to compare non-number values to the target:
 
 ```javascript
 const pets = [
-    { name: 'Fluffy', age: 10 },
-    { name: 'Biscuit', age: 6 },
-    { name: 'Wilbur', age: 12 }
-];
+  { name: 'Fluffy', age: 10 },
+  { name: 'Biscuit', age: 6 },
+  { name: 'Wilbur', age: 12 },
+]
 
-findClosest(pets, 7, ({ age }) => age);
+findClosest(pets, 7, ({ age }) => age)
 // => { name: 'Biscuit', age: 6 }
 ```
+
+#### Filtering
 
 Additionally, returning `false` from this function omits the value:
 
 ```javascript
-const isGreaterThan10 = n => n > 10;
+const isGreaterThan10 = (n) => n > 10
 
-findClosest([0, 10, 20, 30], 12);
+findClosest([0, 10, 20, 30], 12)
 // => 10
 
-findClosest([0, 10, 20, 30], 12, isGreaterThan10);
+findClosest([0, 10, 20, 30], 12, isGreaterThan10)
 // => 20
 ```
 
-The filtering _and_ mapping can be performed by the same function:
+#### Mapping _and_ filtering
+
+The mapping and filtering can be performed by the same function:
 
 ```javascript
 const pets = [
-    { name: 'Fluffy', age: 10 },
-    { name: 'Biscuit', age: 6 },
-    { name: 'Wilbur', age: 12 }
-];
+  { name: 'Fluffy', age: 10 },
+  { name: 'Biscuit', age: 6 },
+  { name: 'Wilbur', age: 12 },
+]
 
 findClosest(pets, 7, ({ age }) => {
   if (age < 7) {
-    return false;
+    return false
   }
-  return age;
-});
+  return age
+})
 // => { name: 'Fluffy', age: 10 }
 ```
 
-**Note** that, unless all the values in the array are numbers, the `filterMapFn` cannot return `true`.
+**Note** that, unless all the values in the array are numbers, the `filterMapFn` cannot return `true` - attempting to do so will cause an error to be thrown.
+
+#### `context` argument
+
+`filterMapFn` also receives a second argument with context information, allowing the last example to be rewritten like this:
+
+```javascript
+findClosest(pets, 7, (pet, context) => {
+  if (pet.age < context.target) {
+    return false
+  }
+  return pet.age
+})
+```
+
+The `context` argument also has `context.index` and `context.array` properties.
 
 #### Performance
 

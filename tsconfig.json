@@ -17,6 +17,5 @@
     "forceConsistentCasingInFileNames": true,
     "lib": ["es2015"]
   },
-  "include": ["./src"],
-  "exclude": ["./src/**/*.test.ts", "node_modules"]
+  "include": ["./src"]
 }

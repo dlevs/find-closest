@@ -19,10 +19,10 @@
     "approximate",
     "nearest"
   ],
-  "source": "src/findClosest.ts",
-  "main": "dist/findClosest.js",
-  "module": "dist/findClosest.module.js",
-  "unpkg": "dist/findClosest.umd.js",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.module.js",
+  "unpkg": "dist/index.umd.js",
   "files": [
     "/dist"
   ],
@@ -37,6 +37,7 @@
     "microbundle": "0.12.3",
     "prettier": "2.1.1",
     "ts-jest": "26.3.0",
+    "tsd": "0.13.1",
     "typescript": "4.0.2"
   },
   "prettier": {

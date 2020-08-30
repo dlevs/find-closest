@@ -1,11 +1,9 @@
-/**
- * Returns the index of the item in an array that is closest to the value
- * specified by the `needle` argument.
- */
-export const findClosestIndex: Finder<number> = (
-  haystack: any[],
-  needle: number,
-  filterMapFn?: IterationFn<number, number | boolean>
+import type { FinderNonOverloaded } from './types'
+
+export const findClosestIndexRaw: FinderNonOverloaded<'index'> = (
+  collection,
+  target,
+  filterMapFn
 ) => {
   let closest = {
     index: -1,
@@ -13,12 +11,16 @@ export const findClosestIndex: Finder<number> = (
     value: 0,
   }
 
-  for (let index = 0; index < haystack.length; index++) {
-    const rawValue = haystack[index]
+  for (let index = 0; index < collection.length; index++) {
+    const rawValue = collection[index]
     let value: number
 
     if (filterMapFn) {
-      const mappedValue = filterMapFn(rawValue, index, haystack)
+      const mappedValue = filterMapFn(rawValue, {
+        index,
+        target,
+        collection,
+      })
 
       switch (mappedValue) {
         case false:
@@ -43,7 +45,7 @@ export const findClosestIndex: Finder<number> = (
       value = rawValue
     }
 
-    const distance = Math.abs(value - needle)
+    const distance = Math.abs(value - target)
 
     if (distance === 0) {
       return index
@@ -57,29 +59,5 @@ export const findClosestIndex: Finder<number> = (
   return closest.index
 }
 
-/**
- * Returns the item in an array that is closest to the value specified by the
- * `needle` argument.
- */
-export const findClosest: Finder = (
-  haystack: any[],
-  needle: number,
-  filterMapFn?: IterationFn<number, number | boolean>
-) => haystack[findClosestIndex(haystack, needle, filterMapFn)]
-
-export default findClosest
-
-interface Finder<R = unknown> {
-  (
-    haystack: number[],
-    needle: number,
-    filterMapFn?: IterationFn<number, number | boolean>
-  ): number
-  <T>(
-    haystack: T[],
-    needle: number,
-    filterMapFn: IterationFn<T, number | false>
-  ): R extends unknown ? T : number
-}
-
-type IterationFn<T, R> = (value: T, index: number, array: T[]) => R
+export const findClosestRaw: FinderNonOverloaded<'value'> = (...args) =>
+  args[0][findClosestIndexRaw(...args)]

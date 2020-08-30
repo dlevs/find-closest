@@ -2,6 +2,12 @@
   "name": "find-closest",
   "version": "6.0.1",
   "description": "Like Array.prototype.find, but for finding the closest match.",
+  "author": "Daniel Levett",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dlevs/find-closest"
+  },
   "keywords": [
     "find",
     "closest",
@@ -13,31 +19,42 @@
     "approximate",
     "nearest"
   ],
+  "source": "src/findClosest.ts",
   "main": "dist/findClosest.js",
+  "module": "dist/findClosest.module.js",
+  "unpkg": "dist/findClosest.umd.js",
   "files": [
     "/dist"
   ],
   "scripts": {
-    "clean": "rimraf dist",
-    "lint": "tslint --format stylish --project .",
     "test": "jest",
-    "build": "tsc",
-    "prepublish": "npm run build",
-    "prebuild": "npm test && npm run lint && npm run clean"
-  },
-  "author": "Daniel Levett",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dlevs/find-closest"
+    "build": "microbundle",
+    "prepublish": "npm test && npm run build"
   },
   "devDependencies": {
-    "@dlevs/tslint-config": "1.0.4",
-    "@types/jest": "24.0.18",
-    "jest": "24.9.0",
-    "rimraf": "3.0.0",
-    "ts-jest": "24.1.0",
-    "tslint": "5.20.0",
-    "typescript": "3.9.7"
+    "@types/jest": "26.0.10",
+    "jest": "26.4.2",
+    "microbundle": "0.12.3",
+    "prettier": "2.1.1",
+    "ts-jest": "26.3.0",
+    "typescript": "4.0.2"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }

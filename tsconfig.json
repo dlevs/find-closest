@@ -1,15 +1,13 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    "target": "es5",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "strict": true,
-    "module": "commonjs",
-    "sourceMap": true,
     "declaration": true,
     "pretty": true,
     "newLine": "lf",
-    "stripInternal": true,
-    "allowSyntheticDefaultImports": true,
     "noImplicitReturns": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
@@ -19,11 +17,6 @@
     "forceConsistentCasingInFileNames": true,
     "lib": ["es2015"]
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "**/*.test.ts",
-    "node_modules"
-  ]
+  "include": ["./src"],
+  "exclude": ["./src/**/*.test.ts", "node_modules"]
 }

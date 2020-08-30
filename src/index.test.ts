@@ -14,7 +14,7 @@ function testFindClosest(expectedIndex: number): Finder<'value'> {
   return wrappedFindClosest
 }
 
-// TODO: Move
+// TODO: Move, and make small Jest ".not.throw()" wrapper
 expectType<typeof findClosest>(testFindClosest(1))
 expectType<number>(findClosestIndex(['foo', 'barr'], 2, (str) => str.length))
 

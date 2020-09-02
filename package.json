@@ -28,7 +28,7 @@
   ],
   "scripts": {
     "test": "jest",
-    "build": "microbundle",
+    "build": "rm -rf dist && microbundle",
     "prepublish": "npm test && npm run build"
   },
   "devDependencies": {
@@ -37,7 +37,6 @@
     "microbundle": "0.12.3",
     "prettier": "2.1.1",
     "ts-jest": "26.3.0",
-    "tsd": "0.13.1",
     "typescript": "4.0.2"
   },
   "prettier": {

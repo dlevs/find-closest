@@ -55,7 +55,7 @@ findClosest([0, 10, 20, 30], 12, isGreaterThan10)
 
 #### Mapping _and_ filtering
 
-The mapping and filtering can be performed by the same function:
+Mapping and filtering can be performed by the same function:
 
 ```javascript
 const pets = [

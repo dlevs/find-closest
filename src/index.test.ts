@@ -1,8 +1,15 @@
-import { expectType } from 'tsd'
 import { findClosest, findClosestIndex } from './index'
 import { findClosestRaw, findClosestIndexRaw } from './findClosest'
 import type { Finder, FinderNonOverloaded } from './types'
 
+/**
+ * Get a function which will assert that both `findClosest` and
+ * `findClosestIndex` will return the correct value associated
+ * with `expectedIndex`.
+ *
+ * Return the value to conform to the `Finder` type, so that
+ * the types can be tested too.
+ */
 function testFindClosest(expectedIndex: number): Finder<'value'> {
   const wrappedFindClosest: FinderNonOverloaded<'value'> = (...args) => {
     const [array] = args
@@ -14,8 +21,16 @@ function testFindClosest(expectedIndex: number): Finder<'value'> {
   return wrappedFindClosest
 }
 
-// TODO: Move, and make small Jest ".not.throw()" wrapper
+/**
+ * Get TypeScript compiler to throw an error when type does not match.
+ */
+function expectType<T>(_value: T): void {}
+
+// Validate that `testFindClosest` has the same signature as `findClosest` and
+// can therefore be used to test the type of `findClosest`.
 expectType<typeof findClosest>(testFindClosest(1))
+
+// Quick proof that `findClosestIndex` return type is a number.
 expectType<number>(findClosestIndex(['foo', 'barr'], 2, (str) => str.length))
 
 describe('findClosest / findClosestIndex', () => {

@@ -8,7 +8,6 @@ export const findClosestIndexRaw: FinderNonOverloaded<'index'> = (
   let closest = {
     index: -1,
     distance: Number.POSITIVE_INFINITY,
-    value: 0,
   }
 
   for (let index = 0; index < collection.length; index++) {
@@ -22,19 +21,17 @@ export const findClosestIndexRaw: FinderNonOverloaded<'index'> = (
         collection,
       })
 
-      switch (mappedValue) {
-        case false:
-          continue
-        case true:
-          if (typeof rawValue !== 'number') {
-            throw new TypeError(
-              `\`filterMapFn\` returned \`true\` for non-number value \`${rawValue}\`.`
-            )
-          }
-          value = rawValue
-          break
-        default:
-          value = mappedValue
+      if (mappedValue === false) {
+        continue
+      } else if (mappedValue === true) {
+        if (typeof rawValue !== 'number') {
+          throw new TypeError(
+            `\`filterMapFn\` returned \`true\` for non-number value \`${rawValue}\`.`
+          )
+        }
+        value = rawValue
+      } else {
+        value = mappedValue
       }
     } else {
       if (typeof rawValue !== 'number') {
@@ -52,7 +49,7 @@ export const findClosestIndexRaw: FinderNonOverloaded<'index'> = (
     }
 
     if (distance < closest.distance) {
-      closest = { index, distance, value }
+      closest = { index, distance }
     }
   }
 
